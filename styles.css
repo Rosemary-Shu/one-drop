@@ -1,0 +1,168 @@
+/* 一分钟慢下来 · 有光的纸 */
+
+:root {
+  --paper: #F7F5F0;
+  --ink: #4a4640;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 米白纸，右上角像有一扇窗透进来的暖光 */
+body {
+  background:
+    radial-gradient(90% 60% at 92% -8%, rgba(255, 244, 214, 0.95), rgba(255, 244, 214, 0) 60%),
+    radial-gradient(60% 40% at 10% 105%, rgba(236, 232, 220, 0.8), rgba(236, 232, 220, 0) 70%),
+    linear-gradient(180deg, #FBF9F4 0%, #F7F5F0 55%, #F3F0E8 100%);
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 细而淡的纸纹，像好纸，不像旧纸 */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button:focus { outline: none; }
+button:focus-visible { outline: 1px solid rgba(74, 70, 64, 0.45); outline-offset: 4px; }
+
+.panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 1.2s ease, transform 1.2s ease, visibility 1.2s;
+}
+
+.panel.is-on {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+}
+
+.line {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  letter-spacing: 0.12em;
+}
+
+.btn {
+  min-width: 6.5em;
+  min-height: 44px;
+  padding: 0.5rem 1.4rem;
+  border: 1px solid rgba(74, 70, 64, 0.22);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  letter-spacing: 0.2em;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.btn:hover { background: rgba(74, 70, 64, 0.05); border-color: rgba(74, 70, 64, 0.35); }
+
+.sound {
+  position: fixed;
+  z-index: 2;
+  top: calc(0.8rem + var(--safe-top));
+  right: calc(0.9rem + var(--safe-right));
+  min-height: 44px;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  color: #5d574f;
+}
+
+@media (min-width: 800px) {
+  .line { font-size: 1.125rem; }
+}
+
+/* 检查截图时不要过渡动画 */
+.qa .panel { transition: none; }
+
+/* 倒数的数字：细宋体，很淡；一秒换一次，旧的往上淡出，新的从下面浮现 */
+.count {
+  position: fixed;
+  right: 9%;
+  width: 6rem;
+  top: calc(60% - 4.2rem);
+  height: 3rem;
+  pointer-events: none;
+  text-align: right;
+  font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+  font-weight: 300;
+  font-size: 2.2rem;
+  letter-spacing: 0.04em;
+  color: #4a4640;
+  font-variant-numeric: lining-nums;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+.count.is-on { opacity: 1; }
+.count > span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 2.8s ease, transform 2.8s ease;
+}
+.count > span.is-now { opacity: 0.45; transform: none; }
+.count > span.is-gone { opacity: 0; transform: translateY(-10px); }
+@media (min-width: 800px) { .count { font-size: 2.6rem; } }
+
+.sound[hidden] { display: none; }
+
+/* 数字后面小小的"秒"：比数字小、更淡，不抢 */
+.count .unit {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.8em;
+  margin-left: 0.04em;
+  vertical-align: 0.1em;
+}
