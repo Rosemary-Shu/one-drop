@@ -631,7 +631,7 @@
       } else {
         if (!splash) {
           splash = makeSplash();
-          if (snd.ctx && snd.on) { var t0 = snd.ctx.currentTime + 0.01; drip(t0, 0.45, 760); drip(t0 + 0.3, 0.16, 1050); }
+          if (snd.ctx && snd.on) { var t0 = snd.ctx.currentTime + 0.01; drip(t0, 0.495, 760); drip(t0 + 0.3, 0.176, 1050); }
         }
         drawSplash(fallT - 0.72);
         if (!endShown && fallT - 0.72 > END_DELAY) { endShown = true; showPanel("end"); }
@@ -756,7 +756,7 @@
       dl.connect(dlp); dlp.connect(fb); fb.connect(dl);
       dlp.connect(wet); wet.connect(snd.master);
       snd.music = a.createGain();
-      snd.music.gain.value = 1;
+      snd.music.gain.value = 1.1;
       snd.music.connect(snd.master);
       snd.music.connect(dl);
       snd.next = a.currentTime + 2.5;
