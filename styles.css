@@ -166,3 +166,8 @@ button:focus-visible { outline: 1px solid rgba(74, 70, 64, 0.45); outline-offset
   margin-left: 0.04em;
   vertical-align: 0.1em;
 }
+
+/* 手机：数字挪到右上角的空白纸上，不和开头那句挤在一起 */
+@media (max-width: 600px) {
+  .count { top: 12%; right: 7%; font-size: 2rem; }
+}

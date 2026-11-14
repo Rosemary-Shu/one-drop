@@ -631,7 +631,7 @@
       } else {
         if (!splash) {
           splash = makeSplash();
-          if (snd.ctx && snd.on) { var t0 = snd.ctx.currentTime + 0.01; drip(t0, 0.16, 760); drip(t0 + 0.3, 0.05, 1050); }
+          if (snd.ctx && snd.on) { var t0 = snd.ctx.currentTime + 0.01; drip(t0, 0.45, 760); drip(t0 + 0.3, 0.16, 1050); }
         }
         drawSplash(fallT - 0.72);
         if (!endShown && fallT - 0.72 > END_DELAY) { endShown = true; showPanel("end"); }
@@ -732,7 +732,15 @@
       var a = snd.ctx = new AC();
       snd.master = a.createGain();
       snd.master.gain.value = 0;
-      snd.master.connect(a.destination);
+      // 保护：几个音叠在一起时不爆音
+      var comp = a.createDynamicsCompressor();
+      comp.threshold.value = -14;
+      comp.knee.value = 12;
+      comp.ratio.value = 4;
+      comp.attack.value = 0.005;
+      comp.release.value = 0.25;
+      snd.master.connect(comp);
+      comp.connect(a.destination);
       var lp = a.createBiquadFilter();
       lp.type = "lowpass";
       lp.frequency.value = 900;
@@ -780,8 +788,8 @@
     // 多半走相邻的音，偶尔跳一下，像有人随手轻轻弹
     var step = [-2, -1, -1, 1, 1, 2][Math.floor(Math.random() * 6)];
     lastIdx = Math.max(0, Math.min(SCALE.length - 1, lastIdx + step));
-    note(t, SCALE[lastIdx], 0.05 + Math.random() * 0.025);
-    if (Math.random() < 0.18) note(t + 0.02, SCALE[Math.max(0, lastIdx - 3)] / 2, 0.035);
+    note(t, SCALE[lastIdx], 0.17 + Math.random() * 0.08);
+    if (Math.random() < 0.18) note(t + 0.02, SCALE[Math.max(0, lastIdx - 3)] / 2, 0.12);
   }
   function note(t, f, amp) {
     var a = snd.ctx;
